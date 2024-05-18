@@ -18,10 +18,37 @@ const useField = (type) => {
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
 
-  // ...
+  useEffect(() => {
+    const getData = async (baseUrl) => {
+      try {
+      const response = await axios.get(baseUrl)
+      setResources(response.data)
+      }
+      catch (err) {
+        console.log(err)
+      }
+    }
 
-  const create = (resource) => {
-    // ...
+    getData(baseUrl)
+
+  }, [baseUrl])
+
+  const create = async (resource) => {
+
+    try {
+    const uniqueId = () => {
+      const dateString = Date.now().toString(36);
+      const randomness = Math.random().toString(36).substr(2);
+      return dateString + randomness;
+    };
+    const id = uniqueId()
+    const response = await axios.post(`${baseUrl}`, {...resource, id:id } )
+    setResources(resources.concat(response.data))
+    return response
+  }
+  catch (err) {
+    console.log(err)
+  }
   }
 
   const service = {
